@@ -10,7 +10,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 setup(
     name='krull',
 
-    version='0.0.5',
+    version='0.0.6',
 
     description='This is a lightweight microframework for building restful APIs',
     long_description=long_description,
@@ -33,7 +33,7 @@ setup(
         'Programming Language :: Python :: 3.5',
     ],
 
-    keywords='dependency injection',
+    keywords='rest, api, web framework, micro-framework',
 
     packages=find_packages(),
     install_requires=[],
