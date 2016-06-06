@@ -7,8 +7,17 @@ import re
 route_registry = []
 
 def build_route_pattern(route):
-    route_regex = re.sub(r'(<\w+>)', r'(?P\1.+)', route)
-    return re.compile("^{}$".format(route_regex))
+    route = re.sub(r'(<int:\w+>)', r'(?P\1\d+)', route)
+    route = re.sub(r'(<str:\w+>)', r'(?P\1\w+)', route)
+
+    has_int = re.search("int:", route)
+    if has_int:
+        route = route[:has_int.start()] + route[has_int.end():]
+
+    has_str = re.search("str:", route)
+    if has_str:
+        route = route[:has_str.start()] + route[has_str.end():]
+    return re.compile("^{}$".format(route))
 
 
 def route_handler(path: str, method: str, **kwargs):
