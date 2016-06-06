@@ -71,7 +71,8 @@ class RequestHandler(BaseHTTPRequestHandler):
                 self.inputdata = {}
 
     def process(self, data=None):
-        response = self.handler(self.request, Response(), **self.path_params)
+        self.request.path_params = self.path_params
+        response = self.handler(self.request, Response())
 
         self.send_response(
             response.status, 
