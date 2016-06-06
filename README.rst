@@ -7,7 +7,7 @@ This is a lightweight microframework for building restful APIs
     from krull.server import run_server
 
 
-    @route_handler(path='/users/<int:id>', method='GET')
+    @endpoint(path='/users/<int:id>', method='GET')
     def getusers(req, res, *args, **kwargs):
         res.status = 200
         user_id = kwargs.get("id")
@@ -15,7 +15,7 @@ This is a lightweight microframework for building restful APIs
         return res
 
 
-    @route_handler(path='/users/<str:username>', method='GET')
+    @endpoint(path='/users/<str:username>', method='GET')
     def getuserbyusername(req, res, *args, **kwargs):
         res.status = 200
         username = kwargs.get("username")
@@ -23,7 +23,7 @@ This is a lightweight microframework for building restful APIs
         return res
 
 
-    @route_handler(path='/users', method='POST')
+    @endpoint(path='/users', method='POST')
     def postusers(req, res):
         # do something with data
         res.status = 201

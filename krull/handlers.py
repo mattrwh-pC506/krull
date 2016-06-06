@@ -20,7 +20,7 @@ def build_route_pattern(route):
     return re.compile("^{}$".format(route))
 
 
-def route_handler(path: str, method: str, **kwargs):
+def endpoint(path: str, method: str, **kwargs):
     global route_registry
 
     def wrapper(handler):

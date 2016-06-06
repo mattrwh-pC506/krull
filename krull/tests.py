@@ -1,8 +1,8 @@
-from handlers import route_handler
+from handlers import endpoint
 from server import run_server
 
 
-@route_handler(path='/users/<int:id>', method='GET')
+@endpoint(path='/users/<int:id>', method='GET')
 def getusers(req, res, *args, **kwargs):
     res.status = 200
     user_id = kwargs.get("id")
@@ -10,7 +10,7 @@ def getusers(req, res, *args, **kwargs):
     return res
 
 
-@route_handler(path='/users/<str:username>', method='GET')
+@endpoint(path='/users/<str:username>', method='GET')
 def getuserbyusername(req, res, *args, **kwargs):
     res.status = 200
     username = kwargs.get("username")
@@ -18,7 +18,7 @@ def getuserbyusername(req, res, *args, **kwargs):
     return res
 
 
-@route_handler(path='/users', method='POST')
+@endpoint(path='/users', method='POST')
 def postusers(req, res):
     # do something with data
     res.status = 201
