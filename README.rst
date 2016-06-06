@@ -8,7 +8,7 @@ This is a lightweight microframework for building restful APIs
 
 
     @route_handler(path='/users/<int:id>', method='GET')
-    def getusers(req, res, \*args, \**kwargs):
+    def getusers(req, res, *args, **kwargs):
         res.status = 200
         user_id = kwargs.get("id")
         res.data = {"message": "Hello world, number {}!".format(user_id)}
@@ -16,7 +16,7 @@ This is a lightweight microframework for building restful APIs
 
 
     @route_handler(path='/users/<str:username>', method='GET')
-    def getuserbyusername(req, res, \*args, \**kwargs):
+    def getuserbyusername(req, res, *args, **kwargs):
         res.status = 200
         username = kwargs.get("username")
         res.data = {"message": "Hello world, and hey {}!".format(username)}
