@@ -10,7 +10,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 setup(
     name='krull',
 
-    version='0.0.2',
+    version='0.0.3',
 
     description='This is a lightweight microframework for building restful APIs',
     long_description=long_description,
