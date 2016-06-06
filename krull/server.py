@@ -1,4 +1,5 @@
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from http.server import HTTPServer
+from handlers import RequestHandler
 
 
 def run_server(server_class=HTTPServer, handler_class=RequestHandler):

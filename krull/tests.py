@@ -1,11 +1,12 @@
-from krull.handlers import route_handler
-from krull.server import run_server
+from handlers import route_handler
+from server import run_server
 
 
-@route_handler(path='/users', method='GET')
-def getusers(req, res):
+@route_handler(path='/users/<id>', method='GET')
+def getusers(req, res, *args, **kwargs):
     res.status = 200
-    res.data = {"message": "Hello world!"}
+    user_id = kwargs.get("id")
+    res.data = {"message": "Hello world, number {}!".format(user_id)}
     return res
 
 

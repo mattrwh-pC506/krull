@@ -1,14 +1,21 @@
+from http.server import BaseHTTPRequestHandler
 import json
 import cgi
+import re
 
 
-route_registry = {}
+route_registry = []
+
+def build_route_pattern(route):
+    route_regex = re.sub(r'(<\w+>)', r'(?P\1.+)', route)
+    return re.compile("^{}$".format(route_regex))
+
 
 def route_handler(path: str, method: str, **kwargs):
     global route_registry
 
     def wrapper(handler):
-        route_registry[path] = handler
+        route_registry.append((build_route_pattern(path), handler))
 
         def registered_handler(*args, **kwargs):
             handler(*args, **kwargs)
@@ -33,23 +40,29 @@ class RequestHandler(BaseHTTPRequestHandler):
 
     def route(self):
         global route_registry
-        self.handler = route_registry[self.path]
+
+        self.route_and_handler = [
+                path for path in route_registry 
+                    if path[0].match(self.path)
+                ][0]
+        if self.route_and_handler:
+            self.handler = self.route_and_handler[1]
+            self.path_params = self.route_and_handler[0].match(self.path).groupdict()
+
         if self.command == 'POST':
 
             if self.headers.get('content-type') == 'application/json':
                 length = int(self.headers.get('content-length'))
-                print ("LEN", length)
                 parseddata = cgi.parse_qs(
                         self.rfile.read(length), 
                         keep_blank_values=1)
                 self.inputdata = json.loads(
                         [k for k in parseddata][0].decode('UTF-8'))
-                print ("INPUTS", self.inputdata)
             else:
                 self.inputdata = {}
 
     def process(self, data=None):
-        response = self.handler(self.request, Response())
+        response = self.handler(self.request, Response(), **self.path_params)
 
         self.send_response(
             response.status, 
