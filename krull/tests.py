@@ -1,31 +1,42 @@
-from handlers import endpoint
-from server import run_server
+import pytest
+from core import endpoints, JsonResponse
+from server import run_krull
 
 
-@endpoint(path='/users/<int:id>', method='GET')
-def getusers(req, res):
+@endpoints({
+    'path': '/users/<int:id>', 
+    'method': 'GET', 
+    'name': "getusers",
+})
+def getusers(req):
     user_id = req.path_params["id"]
-    res.data = {"message": "Hello world, number {}!".format(user_id)}
-    res.status = 200
+    message = "Hello world, number {}!".format(user_id)
+    res = JsonResponse({"message": message}, status=200)
     return res
 
 
-@endpoint(path='/users/<str:username>', method='GET')
-def getuserbyusername(req, res):
+@endpoints({
+    'path': '/users/<username>', 
+    'method': 'GET', 
+    'name': "getuserbyusername",
+})
+def getuserbyusername(req):
     username = req.path_params["username"]
-    res.data = {"message": "Hello world, and hey {}!".format(username)}
-    res.status = 200
+    message = "Hello world, and hey {}!".format(username)
+    res = JsonResponse({"message": message}, status=200)
     return res
 
 
-@endpoint(path='/users', method='POST')
-def postusers(req, res):
-    # do something with data
-    res.data = {"message": "success!"}
-    res.status = 201
+@endpoints({
+    'path': '/users', 
+    'method': 'POST', 
+    'name': "postusers",
+})
+def postusers(req):
+    res = JsonResponse({"message": "success!"}, status=200)
     return res
 
 
 if __name__ == '__main__':
-    run_server()
+    run_krull()
 

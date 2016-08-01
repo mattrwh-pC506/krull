@@ -1,12 +1,11 @@
-from http.server import HTTPServer
-from handlers import RequestHandler
+from core import spawn_krull
+from werkzeug.serving import run_simple
 
 
-def run_server(server_class=HTTPServer, handler_class=RequestHandler):
-    server_address = ('', 6174)
-    httpd = server_class(server_address, handler_class)
-    httpd.serve_forever()
+def run_krull():
+    krull = spawn_krull()
+    return run_simple('127.0.0.1', 5000, krull)
 
 
 if __name__ == '__main__':
-    run_server()
+    run_krull()

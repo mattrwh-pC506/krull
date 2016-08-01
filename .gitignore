@@ -2,6 +2,8 @@ build/
 dist/
 *.egg-info/
 *.egg
+*.tox
+*.cache
 *.py[cod]
 __pycache__/
 *.so
