@@ -1,49 +1,102 @@
 #Krull
 =======================
 
-This is a lightweight microframework for building restful APIs
+This is a lightweight microframework for defining restful APIs in human readable docstrings.
+
+## Where it is currently
+Currently krull is in alpha stages, and is constantly in flux. For now, it can be reliably used to route requests to views, either class based or function based, by defining configs within docstrings.
+
+## Where is it going
+The core of krull is the definition of API schemas via docstrings. With that simple goal comes a very declaritve means for mapping API schemas to business logic. With that said, the roadmap is such:
+
+- Database and SQLAlchemy hookup
+- Declarative model 2 view serialization
+- Declaritive error handling
+- Declaritive validation
+- Declaritive documenation generation
+
+The plan is to base the schema on Swagger specs so that we can generate a browsable API/ documentation that correctly  maps and actually enforces parsing, validation, and serialization. 
+
+
+# Examples
+
+# Function based views
 
 ```python
-import pytest
-from core import endpoints, JsonResponse
-from server import run_krull
+from core import get_app
+from responses import JsonResponse
 
+app = get_app()
 
-@endpoints({
-    'path': '/users/<int:id>', 
-    'method': 'GET', 
-    'name': "getusers",
-})
-def getusers(req):
-    user_id = req.path_params["id"]
-    message = "Hello world, number {}!".format(user_id)
-    res = JsonResponse({"message": message}, status=200)
+movies = [
+    {"id": 1, "title": "Die Hard"},
+    {"id": 2, "title": "Jurassic Park"},
+    {"id": 3, "title": "Terminator"},
+]
+
+@app.endpoint
+def get_movie(req):
+    '''
+    path: /movies/<int:movie_id>
+    method: GET
+    name: getmovie
+    '''
+    movie_id = req.path_params["movie_id"]
+    movie = [m for m in movies if m["id"] == movie_id][0]
+    res = JsonResponse({"data": movie}, status=200)
     return res
 
 
-@endpoints({
-    'path': '/users/<username>', 
-    'method': 'GET', 
-    'name': "getuserbyusername",
-})
-def getuserbyusername(req):
-    username = req.path_params["username"]
-    message = "Hello world, and hey {}!".format(username)
-    res = JsonResponse({"message": message}, status=200)
+@app.endpoint
+def post_movie(req):
+    '''
+    path: /movies
+    method: POST
+    name: postmovies
+    '''
+    movie = req.json
+    if "title" in movie and "id" in movie:
+        movies.append(movie)
+        res = JsonResponse({"message": "success!"}, status=200)
+    else:
+        res = JsonResponse({"message": "fail!"}, status=400)
     return res
+```
+
+# Class based views
+Since endpoint expects to wrap a generic `callable`, it can also be used to decorate classes by moving the view routine to the `__call__` method, like so:
+
+```python
+
+@app.endpoint
+class GetMovie:
+    '''
+    path: /movies/<int:movie_id>
+    method: GET
+    name: getmovie
+    '''
+
+    def __call__(self, req):
+        movie_id = req.path_params["movie_id"]
+        movie = [m for m in movies if m["id"] == movie_id][0]
+        res = JsonResponse({"data": movie}, status=200)
+        return res
 
 
-@endpoints({
-    'path': '/users', 
-    'method': 'POST', 
-    'name': "postusers",
-})
-def postusers(req):
-    res = JsonResponse({"message": "success!"}, status=200)
-    return res
-
-
-if __name__ == '__main__':
-    run_krull()
-
+@app.endpoint
+class PostMovie:
+    '''
+    path: /movies
+    method: POST
+    name: postmovies
+    '''
+    
+    def __call__(self, req):
+        movie = req.json
+        if "title" in movie and "id" in movie:
+            movies.append(movie)
+            res = JsonResponse({"message": "success!"}, status=200)
+        else:
+            res = JsonResponse({"message": "fail!"}, status=400)
+        return res
 ```
