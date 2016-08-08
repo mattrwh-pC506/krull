@@ -1,4 +1,6 @@
 import json
+import yaml
+import inspect
 
 from werkzeug.wrappers import Request, Response
 from werkzeug.routing import Map, Rule
@@ -46,23 +48,27 @@ def spawn_krull():
     return krull
 
 
-def endpoints(configs):
+def endpoints(view):
     
     if not hasattr(endpoints, 'registry'):
         endpoints.registry = []
 
-    def wrapper(view):
-        path = configs.get('path', '/')
-        methods = [configs.get('method', 'GET')]
-        name = configs.get('name', view.__name__)
-        rule = Rule(path, endpoint=name, methods=methods)
-        endpoints.registry.append({'rule': rule, 'view': view, 'name': name,})
+    if inspect.isclass(view):
+        view_name = view.__name__
+        view = view()
+        view.__name__ = view_name
 
-        def registered_view(*args, **kwargs):
-            return view(*args, **kwargs)
-
-        return registered_view
-
+    docstring = inspect.getdoc(view)
+    configs = yaml.load(docstring)
+    path = configs.get('path', '/')
+    methods = [configs.get('method', 'GET')]
+    name = configs.get('name', view.__name__)
+    rule = Rule(path, endpoint=name, methods=methods)
+    endpoints.registry.append({'rule': rule, 'view': view, 'name': name,})
+    
+    def wrapper(*args, **kwargs):
+        return view(*args, **kwargs)
+    
     return wrapper
 
 
