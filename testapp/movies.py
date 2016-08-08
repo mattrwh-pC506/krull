@@ -23,39 +23,48 @@ class GetMovies:
 
 
 @app.endpoint
-def getmovie(req):
+class GetMovie:
     '''
     path: /movies/<int:movie_id>
     method: GET
     name: getmovie
     '''
-    movie_id = req.path_params["movie_id"]
-    movie = [m for m in movies if m["id"] == movie_id][0]
-    res = JsonResponse({"data": movie}, status=200)
-    return res
+
+    def __call__(self, req):
+        movie_id = req.path_params["movie_id"]
+        movie = [m for m in movies if m["id"] == movie_id][0]
+        res = JsonResponse({"data": movie}, status=200)
+        return res
 
 
 @app.endpoint
-def getmoviebytitle(req):
+class GetMovieByTitle:
     '''
     path: /movies/<title>
     method: GET
     name: getmoviebytitle
     '''
-    title = req.path_params["title"]
-    movie = [m for m in movies if m["title"] == title][0]
-    res = JsonResponse({"data": movie}, status=200)
-    return res
+    
+    def __call__(self, req):
+        title = req.path_params["title"]
+        movie = [m for m in movies if m["title"] == title][0]
+        res = JsonResponse({"data": movie}, status=200)
+        return res
 
 
 @app.endpoint
-def postmovie(req):
+class PostMovie:
     '''
     path: /movies
     method: POST
     name: postmovies
     '''
-    body = req.data
-    print ("BODY", body)
-    res = JsonResponse({"message": "success!"}, status=200)
-    return res
+    
+    def __call__(self, req):
+        movie = req.json
+        if "title" in movie and "id" in movie:
+            movies.append(movie)
+            res = JsonResponse({"message": "success!"}, status=200)
+        else:
+            res = JsonResponse({"message": "fail!"}, status=400)
+        return res

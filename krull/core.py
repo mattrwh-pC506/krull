@@ -6,6 +6,7 @@ import os
 import importlib.util
 
 from werkzeug.wrappers import Request, Response
+from werkzeug.utils import cached_property
 from werkzeug.routing import Map, Rule
 from werkzeug.exceptions import NotFound
 from werkzeug.wsgi import SharedDataMiddleware
@@ -13,6 +14,15 @@ from werkzeug.wsgi import SharedDataMiddleware
 
 APP = None
 
+
+class JsonRequest(Request):
+    max_content_length = 1024 * 1024 * 4
+
+    @cached_property
+    def json(self):
+        if self.headers.get('content-type') == 'application/json':
+            return json.loads(self.data.decode('utf8'))
+    
 
 class Krull(object):
     
@@ -34,7 +44,7 @@ class Krull(object):
             return e.get_response()
 
     def wsgi_app(self, environ, start_response):
-        request = Request(environ) 
+        request = JsonRequest(environ) 
         response = self.dispatch_request(request)
         return response(environ, start_response)
 
@@ -63,6 +73,7 @@ class Krull(object):
         
         return wrapper
 
+
 def load_files(directory, file_list, main):
     for file_name in file_list:
         file_extension = file_name[-3:]
@@ -73,6 +84,7 @@ def load_files(directory, file_list, main):
             mod_from_spec = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(mod_from_spec)
 
+
 def load_app():
     main = os.path.abspath(sys.modules['__main__'].__file__)
     root = os.path.dirname(main)
@@ -82,6 +94,7 @@ def load_app():
         file_list = level[2]
         if directory.split("/")[-1] != "__pycache__":
             load_files(directory, file_list, main)
+
 
 def build_app():
     global APP
