@@ -1,11 +1,10 @@
-import pytest
-
-from core import endpoint
+from core import get_app
 from responses import JsonResponse
-from server import run_krull
+
+app = get_app()
 
 
-@endpoint
+@app.endpoint
 class GetUsers:
     '''
     path: /users
@@ -19,7 +18,7 @@ class GetUsers:
         return res
 
 
-@endpoint
+@app.endpoint
 def getuser(req):
     '''
     path: /users/<int:user_id>
@@ -32,7 +31,7 @@ def getuser(req):
     return res
 
 
-@endpoint
+@app.endpoint
 def getuserbyusername(req):
     '''
     path: /users/<username>
@@ -45,7 +44,7 @@ def getuserbyusername(req):
     return res
 
 
-@endpoint
+@app.endpoint
 def postusers(req):
     '''
     path: /users
@@ -55,7 +54,4 @@ def postusers(req):
     res = JsonResponse({"message": "success!"}, status=200)
     return res
 
-
-if __name__ == '__main__':
-    run_krull()
 
