@@ -1,9 +1,11 @@
 import pytest
-from core import endpoints, JsonResponse
+
+from core import endpoint
+from responses import JsonResponse
 from server import run_krull
 
 
-@endpoints
+@endpoint
 class GetUsers:
     '''
     path: /users
@@ -17,7 +19,7 @@ class GetUsers:
         return res
 
 
-@endpoints
+@endpoint
 def getuser(req):
     '''
     path: /users/<int:user_id>
@@ -30,7 +32,7 @@ def getuser(req):
     return res
 
 
-@endpoints
+@endpoint
 def getuserbyusername(req):
     '''
     path: /users/<username>
@@ -43,7 +45,7 @@ def getuserbyusername(req):
     return res
 
 
-@endpoints
+@endpoint
 def postusers(req):
     '''
     path: /users

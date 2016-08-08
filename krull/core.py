@@ -7,15 +7,13 @@ from werkzeug.routing import Map, Rule
 from werkzeug.exceptions import NotFound
 from werkzeug.wsgi import SharedDataMiddleware
 
-from responses import JsonResponse
-
 
 class Krull(object):
     
     routes = None
 
     def get_registry(self):
-        return endpoints.registry
+        return endpoint.registry
 
     def dispatch_request(self, request):
         try:
@@ -48,10 +46,10 @@ def spawn_krull():
     return krull
 
 
-def endpoints(view):
+def endpoint(view):
     
-    if not hasattr(endpoints, 'registry'):
-        endpoints.registry = []
+    if not hasattr(endpoint, 'registry'):
+        endpoint.registry = []
 
     if inspect.isclass(view):
         view_name = view.__name__
@@ -64,11 +62,10 @@ def endpoints(view):
     methods = [configs.get('method', 'GET')]
     name = configs.get('name', view.__name__)
     rule = Rule(path, endpoint=name, methods=methods)
-    endpoints.registry.append({'rule': rule, 'view': view, 'name': name,})
+    endpoint.registry.append({'rule': rule, 'view': view, 'name': name,})
     
     def wrapper(*args, **kwargs):
         return view(*args, **kwargs)
     
     return wrapper
-
 
