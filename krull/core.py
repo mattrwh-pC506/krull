@@ -22,12 +22,21 @@ class JsonRequest(Request):
     def json(self):
         if self.headers.get('content-type') == 'application/json':
             return json.loads(self.data.decode('utf8'))
+   
+
+class AppConfigs:
+    def __init__(self, configs):
+        for k,v in configs.items():
+            setattr(self, k, v)
     
 
 class Krull(object):
     
     routes = None
     endpoint_registry = []
+
+    def __init__(self, configs):
+        self.configs = AppConfigs(configs)
 
     def dispatch_request(self, request):
         try:
@@ -66,7 +75,10 @@ class Krull(object):
         methods = [configs.get('method', 'GET')]
         name = configs.get('name', view.__name__)
         rule = Rule(path, endpoint=name, methods=methods)
-        self.endpoint_registry.append({'rule': rule, 'view': view, 'name': name,})
+        self.endpoint_registry.append({
+            'rule': rule, 
+            'view': view, 
+            'name': name,})
         
         def wrapper(*args, **kwargs):
             return view(*args, **kwargs)
@@ -96,9 +108,9 @@ def load_app():
             load_files(directory, file_list, main)
 
 
-def build_app():
+def build_app(**configs):
     global APP
-    APP = Krull()
+    APP = Krull(configs)
     APP.wsgi_app = SharedDataMiddleware(APP.wsgi_app, {})
     load_app()
     return APP
