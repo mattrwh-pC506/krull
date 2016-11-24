@@ -18,7 +18,7 @@ from core import build_app
 APP_LABEL = "Test App"
 
 
-app = build_app(app_label=APP_LABEL)
+app = build_app({"app_label": APP_LABEL})
 
 if __name__ == '__main__': 
     run_krull(app)

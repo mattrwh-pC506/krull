@@ -108,7 +108,7 @@ def load_app():
             load_files(directory, file_list, main)
 
 
-def build_app(**configs):
+def build_app(configs):
     global APP
     APP = Krull(configs)
     APP.wsgi_app = SharedDataMiddleware(APP.wsgi_app, {})

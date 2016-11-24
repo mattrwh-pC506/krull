@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 setup(
     name='krull',
 
-    version='0.0.7',
+    version='0.0.8-alpha',
     long_description="",
     description='This is a lightweight microframework for building restful APIs',
 
