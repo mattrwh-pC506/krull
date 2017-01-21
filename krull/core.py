@@ -25,6 +25,9 @@ class JsonRequest(Request):
    
 
 class AppConfigs:
+
+    root_path = None
+
     def __init__(self, configs):
         for k,v in configs.items():
             setattr(self, k, v)
@@ -107,7 +110,7 @@ def load_app():
     main = os.path.abspath(sys.modules['__main__'].__file__)
     root = os.path.dirname(main)
     global APP
-    APP.config["root_path"] = root
+    APP.config.root_path = root
     project = os.walk(root)
     for level in project:
         directory = level[0]
