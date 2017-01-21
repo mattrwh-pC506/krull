@@ -116,9 +116,9 @@ def load_app():
             load_files(directory, file_list, main)
 
 
-def build_app(configs):
+def build_app(configs, db_factory=None):
     global APP
-    APP = Krull(configs)
+    APP = Krull(configs, db_factory=db_factory)
     APP.wsgi_app = SharedDataMiddleware(APP.wsgi_app, {})
     load_app()
     return APP
