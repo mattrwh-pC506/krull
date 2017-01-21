@@ -37,9 +37,10 @@ class Krull(object):
     db = None
     configs = AppConfigs({})
 
-    def __init__(self, configs, db=None):
+    def __init__(self, configs, db_factory=None):
         self.configs = AppConfigs(configs)
-        self.db = db 
+        if db_factory:
+            self.db = db_factory(self.configs)
 
     def dispatch_request(self, request):
         try:
