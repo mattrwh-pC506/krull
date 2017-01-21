@@ -34,9 +34,12 @@ class Krull(object):
     
     routes = None
     endpoint_registry = []
+    db = None
+    configs = AppConfigs({})
 
-    def __init__(self, configs):
+    def __init__(self, configs, db=None):
         self.configs = AppConfigs(configs)
+        self.db = db 
 
     def dispatch_request(self, request):
         try:
@@ -75,10 +78,12 @@ class Krull(object):
         methods = [configs.get('method', 'GET')]
         name = configs.get('name', view.__name__)
         rule = Rule(path, endpoint=name, methods=methods)
+        
         self.endpoint_registry.append({
             'rule': rule, 
             'view': view, 
-            'name': name,})
+            'name': name,
+            })
         
         def wrapper(*args, **kwargs):
             return view(*args, **kwargs)
@@ -100,6 +105,8 @@ def load_files(directory, file_list, main):
 def load_app():
     main = os.path.abspath(sys.modules['__main__'].__file__)
     root = os.path.dirname(main)
+    global APP
+    APP.config["root_path"] = root
     project = os.walk(root)
     for level in project:
         directory = level[0]
