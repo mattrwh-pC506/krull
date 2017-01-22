@@ -115,7 +115,8 @@ def load_app():
     for level in project:
         directory = level[0]
         file_list = level[2]
-        if directory.split("/")[-1] != "__pycache__":
+        child_dir = directory.split("/")[-1]
+        if child_dir != "__pycache__" and child_dir != "models":
             load_files(directory, file_list, main)
 
 
