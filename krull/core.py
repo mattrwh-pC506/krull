@@ -22,7 +22,7 @@ class JsonRequest(Request):
     def json(self):
         if self.headers.get('content-type') == 'application/json':
             return json.loads(self.data.decode('utf8'))
-   
+
 
 class AppConfigs:
 
@@ -31,10 +31,10 @@ class AppConfigs:
     def __init__(self, configs):
         for k,v in configs.items():
             setattr(self, k, v)
-    
+
 
 class Krull(object):
-    
+
     routes = None
     endpoint_registry = []
     db = None
@@ -53,14 +53,17 @@ class Krull(object):
             if not matches:
                 raise NotFound("Could not resolve url.")
             request.path_params = values
-            response = matches[0](request)
+            if hasattr(matches[0], "response"):
+                response = matches[0].response(request)
+            else:
+                response = matches[0](request)
             return response
 
         except NotFound as e:
             return e.get_response()
 
     def wsgi_app(self, environ, start_response):
-        request = JsonRequest(environ) 
+        request = JsonRequest(environ)
         response = self.dispatch_request(request)
         return response(environ, start_response)
 
@@ -82,16 +85,16 @@ class Krull(object):
         methods = [configs.get('method', 'GET')]
         name = configs.get('name', view.__name__)
         rule = Rule(path, endpoint=name, methods=methods)
-        
+
         self.endpoint_registry.append({
-            'rule': rule, 
-            'view': view, 
+            'rule': rule,
+            'view': view,
             'name': name,
             })
-        
+
         def wrapper(*args, **kwargs):
             return view(*args, **kwargs)
-        
+
         return wrapper
 
 

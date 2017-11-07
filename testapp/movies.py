@@ -4,10 +4,10 @@ from responses import JsonResponse
 app = get_app()
 
 movies = [
-    {"id": 1, "title": "Die Hard"},
-    {"id": 2, "title": "Jurassic Park"},
-    {"id": 3, "title": "Terminator"},
-]
+        {"id": 1, "title": "Die Hard"},
+        {"id": 2, "title": "Jurassic Park"},
+        {"id": 3, "title": "Terminator"},
+        ]
 
 @app.endpoint
 class GetMovies:
@@ -17,7 +17,7 @@ class GetMovies:
     name: getmovies
     '''
 
-    def __call__(self, req):
+    def response(self, req):
         res = JsonResponse({"data": movies}, status=200)
         return res
 
@@ -30,7 +30,7 @@ class GetMovie:
     name: getmovie
     '''
 
-    def __call__(self, req):
+    def response(self, req):
         movie_id = req.path_params["movie_id"]
         movie = [m for m in movies if m["id"] == movie_id][0]
         res = JsonResponse({"data": movie}, status=200)
@@ -44,8 +44,8 @@ class GetMovieByTitle:
     method: GET
     name: getmoviebytitle
     '''
-    
-    def __call__(self, req):
+
+    def response(self, req):
         title = req.path_params["title"]
         movie = [m for m in movies if m["title"] == title][0]
         res = JsonResponse({"data": movie}, status=200)
@@ -59,8 +59,8 @@ class PostMovie:
     method: POST
     name: postmovies
     '''
-    
-    def __call__(self, req):
+
+    def response(self, req):
         movie = req.json
         if "title" in movie and "id" in movie:
             movies.append(movie)

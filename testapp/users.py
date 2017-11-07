@@ -12,7 +12,7 @@ class GetUsers:
     name: getusers
     '''
 
-    def __call__(self, req):
+    def response(self, req):
         message = "Hello all users! Welcome to {}".format(app.configs.app_label)
         res = JsonResponse({"message": message}, status=200)
         return res

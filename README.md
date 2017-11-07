@@ -64,7 +64,7 @@ def post_movie(req):
 ```
 
 # Class based views
-Since endpoint expects to wrap a generic `callable`, it can also be used to decorate classes by moving the view routine to the `__call__` method, like so:
+Responses are handled via a `response` method.
 
 ```python
 
@@ -76,7 +76,7 @@ class GetMovie:
     name: getmovie
     '''
 
-    def __call__(self, req):
+    def response(self, req):
         movie_id = req.path_params["movie_id"]
         movie = [m for m in movies if m["id"] == movie_id][0]
         res = JsonResponse({"data": movie}, status=200)
@@ -91,7 +91,7 @@ class PostMovie:
     name: postmovies
     '''
     
-    def __call__(self, req):
+    def response(self, req):
         movie = req.json
         if "title" in movie and "id" in movie:
             movies.append(movie)
